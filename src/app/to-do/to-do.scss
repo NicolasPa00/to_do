@@ -1,0 +1,23 @@
+.todo-container {
+  max-width: 700px;
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.todo-item {
+  transition: background 0.2s ease;
+}
+.todo-item:hover {
+  background: #f1f3f5;
+}
+
+.todo-form {
+  background: #ffffff;
+  border-radius: 8px;
+}
+
+.badge {
+  padding: 4px 8px;
+  border-radius: 6px;
+}

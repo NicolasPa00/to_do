@@ -1,0 +1,95 @@
+<div class="container my-4 todo-container">
+  <h3 class="mb-3 text-primary text-center">📋 Actividades pendientes</h3>
+
+  <!-- Mensajes -->
+  <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+
+  <!-- Botones de acción -->
+  <div class="d-flex justify-content-center mb-3">
+    <button class="btn btn-primary mr-2" (click)="openNew()">
+      ➕ Nueva actividad
+    </button>
+    <button class="btn btn-outline-secondary" (click)="load()" [disabled]="loading">
+      🔄 Recargar
+    </button>
+  </div>
+
+  <div *ngIf="loading" class="text-muted text-center">Cargando...</div>
+
+  <div *ngIf="!loading && activities.length === 0" class="text-muted text-center">
+    No hay actividades.
+  </div>
+
+  <!-- Lista de actividades -->
+  <div class="list-group shadow-sm">
+    <div *ngFor="let a of activities"
+         class="list-group-item d-flex align-items-center justify-content-between todo-item">
+      <div>
+        <h5 [class.text-muted]="a.done" class="mb-1">
+          <input type="checkbox" [checked]="a.done" (change)="toggleDone(a)" class="mr-2">
+          {{ a.title }}
+        </h5>
+        <small class="text-muted">
+          {{ shortDate(a.dueDate) }} ·
+          <span [ngClass]="{
+            'badge badge-success': a.priority === 'low',
+            'badge badge-warning': a.priority === 'medium',
+            'badge badge-danger': a.priority === 'high'
+          }">
+            {{ a.priority || 'medium' }}
+          </span>
+        </small>
+        <p *ngIf="a.description" class="mt-1 mb-0">{{ a.description }}</p>
+      </div>
+
+      <div class="btn-group">
+        <button class="btn btn-sm btn-outline-secondary" (click)="openEdit(a)">✏️ Editar</button>
+        <button class="btn btn-sm btn-danger" (click)="confirmAndDelete(a)">🗑️ Eliminar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Formulario -->
+  <div *ngIf="showForm" class="card mt-4 p-4 shadow todo-form">
+    <h5 class="text-center mb-3">{{ editing ? '✏️ Editar actividad' : '➕ Nueva actividad' }}</h5>
+
+    <form [formGroup]="form" (ngSubmit)="save()">
+      <div class="form-group">
+        <label><strong>Título</strong></label>
+        <input formControlName="title" class="form-control" placeholder="Ej: Comprar pan" />
+        <div *ngIf="form.get('title')?.invalid && form.get('title')?.touched" class="text-danger small">
+          El título es obligatorio.
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label><strong>Descripción</strong></label>
+        <textarea formControlName="description" class="form-control" rows="3" placeholder="Detalles opcionales"></textarea>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group col">
+          <label><strong>Fecha límite</strong></label>
+          <input type="date" formControlName="dueDate" class="form-control" />
+        </div>
+        <div class="form-group col">
+          <label><strong>Prioridad</strong></label>
+          <select formControlName="priority" class="form-control">
+            <option value="low">Baja</option>
+            <option value="medium">Media</option>
+            <option value="high">Alta</option>
+          </select>
+        </div>
+        <div class="form-group col-auto d-flex align-items-center">
+          <label class="mr-2 mb-0"><strong>Completada</strong></label>
+          <input type="checkbox" formControlName="done" />
+        </div>
+      </div>
+
+      <div class="text-center mt-3">
+        <button type="submit" class="btn btn-success" [disabled]="form.invalid">💾 Guardar</button>
+        <button type="button" class="btn btn-secondary ml-2" (click)="cancel()">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</div>
